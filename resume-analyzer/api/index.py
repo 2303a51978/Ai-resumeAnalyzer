@@ -1,6 +1,6 @@
 import sys
 import os
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 
 # Add project root to Python path
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -16,13 +16,25 @@ try:
     print("✓ Successfully loaded backend.app")
 except Exception as e:
     print(f"✗ Failed to load backend.app: {e}")
-    
-    # If import fails, use fallback app
+
     @app.route('/')
     def index():
         return jsonify({'error': f'Backend import failed: {str(e)}'}), 500
-    
+
     @app.route('/health')
     def health():
         return jsonify({'status': 'running with fallback app'}), 200
+
+frontend_dir = os.path.join(project_root, 'frontend')
+
+if os.path.isdir(frontend_dir):
+    @app.route('/', defaults={'path': 'index.html'})
+    @app.route('/<path:path>')
+    def serve_frontend(path):
+        if path.startswith('api/'):
+            return jsonify({'error': 'API route not found'}), 404
+        full_path = os.path.join(frontend_dir, path)
+        if os.path.exists(full_path) and not os.path.isdir(full_path):
+            return send_from_directory(frontend_dir, path)
+        return send_from_directory(frontend_dir, 'index.html')
 
