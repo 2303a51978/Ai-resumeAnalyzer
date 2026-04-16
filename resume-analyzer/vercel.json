@@ -4,10 +4,6 @@
     {
       "src": "api/index.py",
       "use": "@vercel/python"
-    },
-    {
-      "src": "frontend",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -17,7 +13,6 @@
     },
     {
       "src": "/analyze",
-      "methods": ["POST"],
       "dest": "api/index.py"
     },
     {
@@ -41,12 +36,16 @@
       "dest": "api/index.py"
     },
     {
-      "src": "/(.*\\.(js|css|json|html|png|jpg|jpeg|svg|gif|webp|ico))",
-      "dest": "frontend/$1"
+      "src": "/auth/(.*)",
+      "dest": "api/index.py"
+    },
+    {
+      "src": "/(.*\\.(js|css|json|png|jpg|jpeg|svg|gif|webp|ico))",
+      "dest": "/frontend/$1"
     },
     {
       "src": "/",
-      "dest": "frontend/index.html"
+      "dest": "/frontend/index.html"
     }
   ]
 }
