@@ -8,10 +8,6 @@
         "maxLambdaSize": "50mb",
         "runtime": "python3.9"
       }
-    },
-    {
-      "src": "frontend/index.html",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -20,8 +16,29 @@
       "dest": "api/index.py"
     },
     {
-      "src": "/static/(.*)",
-      "dest": "frontend/static/$1"
+      "src": "/analyze",
+      "methods": ["POST"],
+      "dest": "api/index.py"
+    },
+    {
+      "src": "/login",
+      "dest": "api/index.py"
+    },
+    {
+      "src": "/register",
+      "dest": "api/index.py"
+    },
+    {
+      "src": "/logout",
+      "dest": "api/index.py"
+    },
+    {
+      "src": "/resumes",
+      "dest": "api/index.py"
+    },
+    {
+      "src": "/stats",
+      "dest": "api/index.py"
     },
     {
       "src": "/(.*\\.(js|css|json|html|png|jpg|jpeg|svg|gif|webp|ico))",
