@@ -60,6 +60,19 @@ UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
 ALLOWED_EXTENSIONS = {'pdf'}
 MAX_FILE_SIZE = int(os.getenv('MAX_FILE_SIZE', 10 * 1024 * 1024))  # 10MB default
 
+# --- Vercel serverless compatibility patch ---
+import platform
+if os.environ.get('VERCEL') or platform.system() == 'Linux':
+    # Vercel serverless is always Linux and only /tmp is writable
+    tmp_dir = '/tmp/resume-analyzer'
+    os.makedirs(tmp_dir, exist_ok=True)
+    app.config['UPLOAD_FOLDER'] = os.path.join(tmp_dir, 'uploads')
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    db_path = os.path.join(tmp_dir, 'resumes.db')
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+    print(f"[Vercel Patch] Using DB at {db_path} and uploads at {app.config['UPLOAD_FOLDER']}")
+# --- End Vercel patch ---
+
 # Create upload folder if it doesn't exist
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
