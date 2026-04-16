@@ -1,11 +1,18 @@
 import sys
 import os
 
-# Add parent directory to path so we can import backend modules
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+# Ensure parent directory is in path for imports
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from backend.app import app
+try:
+    from backend.app import app
+except ImportError as e:
+    print(f"Import error: {e}")
+    raise
 
-# Export the app for Vercel
-if __name__ == "__main__":
-    app.run(debug=False)
+# Vercel serverless function handler
+def handler(request):
+    return app(request.environ, request.start_response)
+
+# Export app directly for Vercel
+__all__ = ['app']

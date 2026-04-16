@@ -1,13 +1,17 @@
 {
   "version": 2,
-  "buildCommand": "cd backend && pip install -r requirements.txt",
   "builds": [
     {
       "src": "api/index.py",
       "use": "@vercel/python",
       "config": {
-        "maxLambdaSize": "50mb"
+        "maxLambdaSize": "50mb",
+        "runtime": "python3.9"
       }
+    },
+    {
+      "src": "frontend/index.html",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -16,8 +20,16 @@
       "dest": "api/index.py"
     },
     {
-      "src": "/(.*)",
+      "src": "/static/(.*)",
+      "dest": "frontend/static/$1"
+    },
+    {
+      "src": "/(.*\\.(js|css|json|html|png|jpg|jpeg|svg|gif|webp|ico))",
       "dest": "frontend/$1"
+    },
+    {
+      "src": "/",
+      "dest": "frontend/index.html"
     }
   ]
 }
